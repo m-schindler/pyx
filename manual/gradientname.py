@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
 # WARNING: THIS IS REALLY OLD CODE. IT COULD PROBABLY BE DONE USING GRAPHX NOWADAYS.
 # HOWEVER, WE DON'T CARE. JUST DON'T TAKE THIS CODE TOO SERIOUSLY.
 
-import sys, imp, re
+import sys, importlib, re
 sys.path[:0] = [".."]
 import pyx
 from pyx import *
@@ -24,7 +25,9 @@ dy = -0.65
 # see comment in colorname.py
 
 p = re.compile("(?P<id>gradient\\.(?P<name>[a-z]+)) += [a-z]*gradient_[a-z]+\\(", re.IGNORECASE)
-lines = imp.find_module("color", pyx.__path__)[0].readlines()
+colormodule_file = open(color.__file__)
+lines = colormodule_file.readlines()
+colormodule_file.close()
 firstgraph = None
 for line in lines: # we yet don't use a file iterator
     m = p.match(line)

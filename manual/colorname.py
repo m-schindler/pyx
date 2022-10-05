@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-import imp, re
+#!/usr/bin/env python3
+import importlib, re
 import pyx
 from pyx import *
 
@@ -20,7 +20,9 @@ lastmodel = 0
 # TODO: code something along the lines of c.l.p post cbs38g$2kp$04$1@news.t-online.com
 
 p = re.compile("(?P<id>(?P<model>[a-z]+)\\.(?P<name>[a-z]+)) += (?P=model)\\([0-9\\., ]+\\)\n", re.IGNORECASE)
-lines = imp.find_module("color", pyx.__path__)[0].readlines()
+colormodule_file = open(color.__file__)
+lines = colormodule_file.readlines()
+colormodule_file.close()
 for line in lines: # we yet don't use a file iterator
     m = p.match(line)
     if m:
