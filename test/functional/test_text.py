@@ -115,6 +115,7 @@ c.insert(sc, [trafo.translate(12, 12)])
 ue_afm = text.UnicodeEngine(font_metric_type=text.FontMetricType.afm)
 c.insert(ue_afm.text(10, 9, "UnicodeEngine output (AFM)"))
 # kpathsea does not search for PFM font files anymore:
+# this fixes part of github issue #37
 #ue_pfm = text.UnicodeEngine(font_metric_type=text.FontMetricType.pfm)
 #c.insert(ue_pfm.text(10, 8, "UnicodeEngine output (PFM)"))
 
