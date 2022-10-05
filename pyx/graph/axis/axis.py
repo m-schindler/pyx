@@ -56,6 +56,16 @@ class NoValidPartitionError(RuntimeError):
     pass
 
 
+class TooSmallValueError(RuntimeError):
+
+    pass
+
+
+class TooLargeValueError(RuntimeError):
+
+    pass
+
+
 class _regularaxis(_axis):
     """base implementation a regular axis
 
@@ -175,11 +185,15 @@ class _regularaxis(_axis):
                 data_max_divided = data.max/self.divisor
             else:
                 data_max_divided = None
+            #data_min_divided, data_max_divided = extendminmax()
             partfunctions = parter.partfunctions(data_min_divided, data_max_divided,
                                                  self.min is None, self.max is None)
         else:
             partfunctions = parter.partfunctions(data.min, data.max,
                                                  self.min is None, self.max is None)
+        # XXX if the partfunctions needed to extendminmax, we can see that only in the tick values.
+        # So, from here on, we should use the ticks to adjust the axis, not data.min or data.max
+
         variants = []
         for partfunction in partfunctions:
             worse = 0
@@ -280,6 +294,52 @@ class logarithmic(_regularaxis):
             raise
 
 log = logarithmic
+
+
+class negative_logarithmic(_regularaxis):
+    """logarithmic axis of negative values: -log(-x)"""
+
+    def __init__(self, parter=parter.negative_autologarithmic(), rater=rater.negative_logarithmic(),
+                       linearparter=parter.autolinear(extendtick=None), **args):
+        _regularaxis.__init__(self, **args)
+        self.parter = parter
+        self.rater = rater
+        self.linearparter = linearparter
+
+    def convert(self, data, value):
+        """axis coordinates -> graph coordinates"""
+        assert self.divisor is None
+        #if self.min is None or self.max is None:
+        #    self.createdata(data.min, data.max)
+        #    #min, max = self.parter.extendminmax(data.min, data.max)
+        #    #if self.min is
+        #print("data.min/max in convert", data.min, data.max, "value:", value)
+        #print("self.min/max in convert", self.min, self.max)
+        #raise
+        # TODO: store log(data.min) and log(data.max)
+        try:
+            logval = math.log(-float(value))
+        except ValueError:
+            raise TooLargeValueError()
+        xi = (logval - math.log(-data.min)) / (math.log(-data.max) - math.log(-data.min))
+        #if not (0 <= xi <= 1):
+        #    print("xi=",xi)
+        #eps = 1.0e-7
+        #assert -eps <= xi <= 1+eps
+        if self.reverse:
+            xi = 1 - xi
+        return xi
+
+    def create(self, data, positioner, graphtextengine, errorname):
+        try:
+            return _regularaxis._create(self, data, positioner, graphtextengine, self.parter, self.rater, errorname)
+        except NoValidPartitionError:
+            if self.linearparter:
+                logger.warning("no valid negative logarithmic partitioning found for axis %s, switch to linear partitioning" % errorname)
+                return _regularaxis._create(self, data, positioner, graphtextengine, self.linearparter, self.rater, errorname)
+            raise
+
+neglog = negative_logarithmic
 
 
 class subaxispositioner(positioner._positioner):
