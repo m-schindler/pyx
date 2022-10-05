@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: ISO-8859-1 -*-
 #
 # Copyright (C) 2011 Michael Schindler <m-schindler@users.sourceforge.net>

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys, math
 sys.path[:0] = [".."]
 import pyx

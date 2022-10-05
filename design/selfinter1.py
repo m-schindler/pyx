@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys;sys.path.insert(0, "..")
 from math import *
 #sys.path.insert(0, os.path.expanduser("~/python/pyx-trunk"))

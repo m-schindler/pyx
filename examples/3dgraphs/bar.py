@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from pyx import *
 
 g = graph.graphxyz(0, 0, size=5, x=graph.axis.bar(), y=graph.axis.bar(), z=None, z2=graph.axis.lin())

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: ISO-8859-15 -*-
 import sys
 sys.path.insert(0, "..")
@@ -14,7 +14,7 @@ def green(x): return 1.5*x**2*(1-x)**3 - 0.8*x**3*(1-x)**2 + 2.0*x**4*(1-x) + x*
 def blue(x):  return 5*x*(1-x)**5 - 0.5*x**2*(1-x)**3 + 0.3*x*x*(1-x)**2 + 5*x**3*(1-x)**2 + 0.5*x**6
 
 # use the implemented converter for the grey value:
-def grey(x): return color.rgb(red(x), green(x), blue(x)).grey().color["gray"]
+def grey(x): return color.rgb(red(x), green(x), blue(x)).grey().g
 
 # plot the color values
 g = graph.graphxy(width=10, ratio=1)
@@ -31,6 +31,6 @@ for i in range(n):
     g.fill(path.rect(x, -2, 10.5/(n-1), 1), [color.rgb(red(t), green(t), blue(t))])
     x += 10.0 / n
 
-g.writeEPSfile("palettetest", paperformat=document.paperformat.A4)
+g.writeEPSfile("palettetest", page_paperformat=document.paperformat.A4)
 g.writePDFfile("palettetest")
 

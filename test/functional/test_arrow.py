@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import pyx
 from pyx import *
 from pyx.path import *

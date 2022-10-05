@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from pyx import *
 
 g = graph.graphxyz(size=4, x2=None, y2=None)

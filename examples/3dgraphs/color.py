@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from pyx import *
 
 g = graph.graphxyz(size=4, projector=graph.graphxyz.parallel(170, 45))

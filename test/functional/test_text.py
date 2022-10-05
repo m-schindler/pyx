@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys; sys.path[:0] = ["../.."]
 
 from pyx import *
@@ -112,10 +112,11 @@ sc.stroke(p, [deco.curvedtext(r"\PyX{} is fun!", textattrs=[trafo.mirror(), traf
 c.insert(sc, [trafo.translate(12, 12)])
 
 # UnicodeEngine output with afm and pfm
-ue_afm = text.UnicodeEngine()
+ue_afm = text.UnicodeEngine(font_metric_type=text.FontMetricType.afm)
 c.insert(ue_afm.text(10, 9, "UnicodeEngine output (AFM)"))
-ue_pfm = text.UnicodeEngine(metric=text.UnicodeEngine.pfm_metric)
-c.insert(ue_pfm.text(10, 8, "UnicodeEngine output (PFM)"))
+# kpathsea does not search for PFM font files anymore:
+#ue_pfm = text.UnicodeEngine(font_metric_type=text.FontMetricType.pfm)
+#c.insert(ue_pfm.text(10, 8, "UnicodeEngine output (PFM)"))
 
 c.writePDFfile("test_text", page_paperformat=document.paperformat.A4)
 c.writeSVGfile("test_text", page_paperformat=document.paperformat.A4)
