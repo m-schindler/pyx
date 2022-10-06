@@ -745,7 +745,7 @@ class linehatched(deco, attr.exclusiveattr, attr.clearclass):
     This class acts as a drop-in replacement for postscript patterns
     from the pattern module which are not understood by some printers"""
 
-    def __init__(self, dist, angle, strokestyles=[], cross=0):
+    def __init__(self, dist, angle, shift=0, strokestyles=[], cross=0, center=None):
         attr.clearclass.__init__(self, _filled)
         attr.exclusiveattr.__init__(self, linehatched)
         self.dist = dist
@@ -753,30 +753,44 @@ class linehatched(deco, attr.exclusiveattr, attr.clearclass):
         self.strokestyles = attr.mergeattrs([style.linewidth.THIN] + strokestyles)
         attr.checkattrs(self.strokestyles, [style.strokestyle])
         self.cross = cross
+        self.center = center
+        self.shift = shift
 
-    def __call__(self, dist=None, angle=None, strokestyles=None, cross=None):
+    def __call__(self, dist=None, angle=None, shift=None, strokestyles=None, cross=None, center=_marker):
         if dist is None:
             dist = self.dist
         if angle is None:
             angle = self.angle
+        if shift is None:
+            shift = self.shift
         if strokestyles is None:
             strokestyles = self.strokestyles
         if cross is None:
             cross = self.cross
-        return linehatched(dist, angle, strokestyles, cross)
+        if center is _marker:
+            center = self.center
+        return linehatched(dist, angle, shift=shift, strokestyles=strokestyles, cross=cross, center=center)
 
     def _decocanvas(self, angle, dp, texrunner):
         dp.ensurenormpath()
         dist_pt = unit.topt(self.dist)
+        shift_pt = unit.topt(self.shift)
 
         c = canvas.canvas([canvas.clip(dp.path)])
         llx_pt, lly_pt, urx_pt, ury_pt = dp.path.bbox().highrestuple_pt()
-        center_pt = 0.5*(llx_pt+urx_pt), 0.5*(lly_pt+ury_pt)
-        radius_pt = 0.5*math.hypot(urx_pt-llx_pt, ury_pt-lly_pt) + dist_pt
+        if self.center is None:
+            center_pt = 0.5*(llx_pt+urx_pt), 0.5*(lly_pt+ury_pt)
+            radius_pt = 0.5*math.hypot(urx_pt-llx_pt, ury_pt-lly_pt) + dist_pt
+        else:
+            center_pt = (unit.topt(self.center[0]), unit.topt(self.center[1]))
+            radius_pt = dist_pt + max([math.hypot(urx_pt-center_pt[0], ury_pt-center_pt[1]),
+                                       math.hypot(llx_pt-center_pt[0], lly_pt-center_pt[1]),
+                                       math.hypot(urx_pt-center_pt[0], lly_pt-center_pt[1]),
+                                       math.hypot(llx_pt-center_pt[0], ury_pt-center_pt[1])])
         n = int(2*radius_pt / dist_pt) + 1
         for i in range(n):
             x_pt = center_pt[0] - radius_pt + i*dist_pt
-            c.stroke(path.line_pt(x_pt, center_pt[1]-radius_pt, x_pt, center_pt[1]+radius_pt),
+            c.stroke(path.line_pt(x_pt+shift_pt, center_pt[1]-radius_pt, x_pt+shift_pt, center_pt[1]+radius_pt),
                      [trafo.rotate_pt(angle, center_pt[0], center_pt[1])] + self.strokestyles)
         return c
 
