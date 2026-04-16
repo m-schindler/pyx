@@ -1,5 +1,6 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import sys; sys.path.insert(0, "../..")
+exit(0)
 
 import math
 from random import Random

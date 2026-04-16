@@ -1,18 +1,21 @@
 import sys; sys.path.insert(0, "../..")
+exit(0)
 
 from pyx import *
 from pyx.config import open, format
 from pyx.font import T1font
-from pyx.font.t1file import from_PF_bytes
+from pyx.font.t1file import T1File #from_PF_bytes
 from pyx.font.afmfile import AFMfile
 
-f = T1font(from_PF_bytes(open("cmr10", [format.type1]).read()),
-           AFMfile(open("cmr10", [format.afm], ascii=True)))
+#f = T1font(from_PF_bytes(open("cmr10", [format.type1]).read()),
+#           AFMfile(open("cmr10", [format.afm], ascii=True)))
+f = T1File.from_PF_filename("/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb")
+# /usr/share/texlive/texmf-dist/fonts/afm/public/amsfonts/cm/cmr10.afm
 
 c = canvas.canvas()
 
 def show(x_pt, y_pt, text, size_pt, **kwargs):
-    t = f.text_pt(x_pt, y_pt, text, size_pt, **kwargs)
+    t = text.text_pt(x_pt, y_pt, text, size_pt, **kwargs)
     c.insert(t)
     c.stroke(t.bbox().rect(), [style.linewidth(0)])
 

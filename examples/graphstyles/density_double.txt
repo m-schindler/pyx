@@ -1,0 +1,6 @@
+Drawing a density plot with two logarithmic scales
+
+Two-dimensional data represented by a color are difficult to plot on
+logarithmic scales. ... Here the positive and the negative values are done on
+two different color axes.
+

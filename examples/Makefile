@@ -13,16 +13,12 @@ thumbpngfiles = $(addsuffix _thumb.png, $(files))
 .PRECIOUS: $(epsfiles) $(pngfiles)
 
 all:
-	$(MAKE) clean
+	$(MAKE) $(epsfiles)
 	$(MAKE) $(ipynbfiles)
 	$(MAKE) $(thumbpngfiles)
 
 clean:
 	rm -f $(epsfiles) $(pdffiles) $(pngfiles) $(svgfiles) $(ipynbfiles) $(thumbpngfiles)
-
-all_without_remove:
-	$(MAKE) $(ipynbfiles)
-	$(MAKE) $(thumbpngfiles)
 
 %.eps: %.py
 	cd $(dir $^); $(PYTHON) -W default $(notdir $^)

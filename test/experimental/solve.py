@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: ISO-8859-1 -*-
 #
 #
@@ -589,8 +589,8 @@ class Solver:
                     if var is not None and var not in vars:
                         vars.append(var)
             if len(vars) == l:
-                a = numpy.zeros((l, l), numpy.float)
-                b = numpy.zeros((l, ), numpy.float)
+                a = numpy.zeros((l, l), dtype=float)
+                b = numpy.zeros((l, ), dtype=float)
                 for i, eq in enumerate(eqs):
                     for addend in eq._addends:
                         var = addend.variable()

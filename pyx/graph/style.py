@@ -556,6 +556,28 @@ def _diamondsymbol(c, x_pt, y_pt, size_pt, attrs):
                      path.lineto_pt(x_pt, y_pt+0.930604859*size_pt),
                      path.closepath()), attrs)
 
+def _monddiasymbol(c, x_pt, y_pt, size_pt, attrs):
+    c.draw(path.path(path.moveto_pt(x_pt-0.930604859*size_pt, y_pt),
+                     path.lineto_pt(x_pt, y_pt-0.537284965*size_pt),
+                     path.lineto_pt(x_pt+0.930604859*size_pt, y_pt),
+                     path.lineto_pt(x_pt, y_pt+0.537284965*size_pt),
+                     path.closepath()), attrs)
+
+def _fivestarsymbol(c, x_pt, y_pt, size_pt, attrs):
+    large_pt = 0.9*size_pt
+    small_pt = 0.4*size_pt
+    c.draw(path.path(path.moveto_pt(x_pt+0.0     *large_pt, y_pt+1.0     *large_pt ),
+                     path.lineto_pt(x_pt-0.587785*small_pt, y_pt+0.809017*small_pt),
+                     path.lineto_pt(x_pt-0.951056*large_pt, y_pt+0.309017*large_pt ),
+                     path.lineto_pt(x_pt-0.951056*small_pt, y_pt-0.309017*small_pt),
+                     path.lineto_pt(x_pt-0.587785*large_pt, y_pt-0.809017*large_pt ),
+                     path.lineto_pt(x_pt+0.0     *small_pt, y_pt-1.0     *small_pt),
+                     path.lineto_pt(x_pt+0.587785*large_pt, y_pt-0.809017*large_pt ),
+                     path.lineto_pt(x_pt+0.951056*small_pt, y_pt-0.309017*small_pt),
+                     path.lineto_pt(x_pt+0.951056*large_pt, y_pt+0.309017*large_pt ),
+                     path.lineto_pt(x_pt+0.587785*small_pt, y_pt+0.809017*small_pt),
+                     path.closepath()), attrs)
+
 
 class _styleneedingpointpos(_style):
 
@@ -586,6 +608,7 @@ class symbol(_styleneedingpointpos):
     triangle = attr.changelist([_trianglesymbol])
     circle = attr.changelist([_circlesymbol])
     diamond = attr.changelist([_diamondsymbol])
+    monddia = attr.changelist([_monddiasymbol])
 
     changecross = attr.changelist([_crosssymbol, _plussymbol, _squaresymbol, _trianglesymbol, _circlesymbol, _diamondsymbol])
     changeplus = attr.changelist([_plussymbol, _squaresymbol, _trianglesymbol, _circlesymbol, _diamondsymbol, _crosssymbol])
@@ -597,6 +620,9 @@ class symbol(_styleneedingpointpos):
     changetriangletwice = attr.changelist([_trianglesymbol, _trianglesymbol, _circlesymbol, _circlesymbol, _diamondsymbol, _diamondsymbol, _squaresymbol, _squaresymbol])
     changecircletwice = attr.changelist([_circlesymbol, _circlesymbol, _diamondsymbol, _diamondsymbol, _squaresymbol, _squaresymbol, _trianglesymbol, _trianglesymbol])
     changediamondtwice = attr.changelist([_diamondsymbol, _diamondsymbol, _squaresymbol, _squaresymbol, _trianglesymbol, _trianglesymbol, _circlesymbol, _circlesymbol])
+
+    changefilled = attr.changelist([_circlesymbol, _diamondsymbol, _squaresymbol, _trianglesymbol, _monddiasymbol, _fivestarsymbol])
+    changestroked = attr.changelist([_crosssymbol, _plussymbol])
 
     changestrokedfilled = attr.changelist([deco.stroked, deco.filled])
     changefilledstroked = attr.changelist([deco.filled, deco.stroked])
@@ -1380,6 +1406,9 @@ class histogram(_style):
             valueaxisname = sharedata.poscolumnnames[1-privatedata.rangeaxisindex]
             privatedata.vfromvalue = graph.axes[valueaxisname].convert(self.fromvalue)
             privatedata.vfromvaluecut = 0
+            if privatedata.vfromvalue is None:
+                privatedata.vfromvalue = 0
+                privatedata.vfromvaluecut = -1
             if privatedata.vfromvalue < 0:
                 privatedata.vfromvalue = 0
                 privatedata.vfromvaluecut = -1
@@ -2042,9 +2071,10 @@ class density(_keygraphstyle):
 
     needsdata = ["values1", "values2", "data12", "data21"]
 
-    def __init__(self, epsilon=1e-10, **kwargs):
+    def __init__(self, epsilon=1e-10, bgcolor=color.gray.white, **kwargs):
         _keygraphstyle.__init__(self, **kwargs)
         self.epsilon = epsilon
+        self.bgcolor = bgcolor
 
     def initdrawpoints(self, privatedata, sharedata, graph):
         privatedata.colors = {}
@@ -2110,6 +2140,9 @@ class density(_keygraphstyle):
                 try:
                     c = self.color(privatedata, c)
                 except TypeError:
+                    c = self.bgcolor
+                if c is None or c == "None":
+                    c = self.bgcolor
                     data.write(empty)
                     continue
 

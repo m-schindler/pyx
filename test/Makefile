@@ -20,3 +20,6 @@ svg:
 doctest:
 	cd ../manual; $(MAKE) doctest
 
+experimental:
+	cd experimental; $(MAKE)
+

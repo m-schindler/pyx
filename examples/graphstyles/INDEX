@@ -1,6 +1,7 @@
 errorbar
 histogram
 density
+density_double
 usesymbol
 changesymbol
 cal

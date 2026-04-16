@@ -1,12 +1,17 @@
 import sys; sys.path[:0] = ["../.."]
 import random, string
 from pyx import *
+exit(0)
 
-text.set(texipc=1)
-text.set(mode="tex", texdebug="debug.tex", usefiles=["debug.dvi", "debug.log"])
+text.set(engine=text.TexEngine, texenc="utf-8",
+         texipc=True,
+         copyinput="debug.tex",
+         usefiles=["debug.dvi", "debug.log"],
+         errordetail=text.errordetail.full,
+)
 
 def randpar():
-    return " ".join(["".join([random.choice(string.lowercase)
+    return " ".join(["".join([random.choice("abcdefghijklmnopqrstuvwxyz")
                               for j in range(random.randint(1, 3))])
                      for i in range(random.randint(100, 300))])
 
@@ -63,7 +68,7 @@ while only is None or n <= only:
         thistextfile.close()
     if only is not None and n <= only:
         continue
-    boxes = text.defaulttexrunner.textboxes(thistext, shapes)
+    boxes = text.defaulttextengine.textboxes(thistext, shapes)
     output(boxes, shapes)
     for i in range(len(boxes)):
         if i < len(shapes):

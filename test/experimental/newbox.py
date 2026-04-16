@@ -70,7 +70,7 @@ def enlarged(anormpath, enlargeby_pt, round):
         i = 0
         while i < len(splitnormsubpathitems):
             if isinstance(splitnormsubpathitems[i], normpath.normcurve_pt) and splitnormsubpathitems[i].arclen_pt(normsubpath.epsilon) > 100:
-                splitnormsubpathitems[i:i+1] = splitnormsubpathitems[i]._midpointsplit(normsubpath.epsilon)
+                splitnormsubpathitems[i:i+1] = splitnormsubpathitems[i]._split(0.5, epsilon=normsubpath.epsilon)
             else:
                 i += 1
         newnormsubpathitems = []
@@ -85,11 +85,13 @@ def enlarged(anormpath, enlargeby_pt, round):
             if isinstance(normsubpathitem, normpath.normcurve_pt):
                 # We should do not alter the sign. Could we do any better here?
                 try:
-                    cs = 1/(normsubpathitem.curveradius_pt([0])[0] + enlargeby_pt)
+                    curv_pt = normsubpathitem.curvature_pt([0])[0]
+                    cs = 1/(1/curv_pt + enlargeby_pt)
                 except ArithmeticError:
                     cs = 0
                 try:
-                    ce = 1/(normsubpathitem.curveradius_pt([1])[0] + enlargeby_pt)
+                    curv_pt = normsubpathitem.curvature_pt([1])[0]
+                    ce = 1/(1/curv_pt + enlargeby_pt)
                 except ArithmeticError:
                     ce = 0
 
@@ -388,13 +390,15 @@ def showcircle(normcurve_pt):
     #     return res
 
     # use Numeric to find the roots (via an equivalent eigenvalue problem)
-    import Numeric, LinearAlgebra
-    mat = Numeric.zeros((10, 10), Numeric.Float)
+    import numpy
+    mat = numpy.zeros((10, 10), dtype=float)
     for i in range(9):
         mat[i+1][i] = 1
     for i in range(10):
         mat[0][i] = -coeffs[i+1]/coeffs[0]
-    ists = [zero.real for zero in LinearAlgebra.eigenvalues(mat) if -1e-10 < zero.imag < 1e-10 and 0 <= zero.real <= 1]
+    evals = numpy.linalg.eigvals(mat)
+    ists = [zero.real for zero in evals if -1e-10 < zero.imag < 1e-10 and 0 <= zero.real <= 1]
+
 
     for t in ists:
         isl = (xdot(t)*(x(t)-gx)+ydot(t)*(y(t)-gy))/(xdot(t)*cos+ydot(t)*sin)
