@@ -24,7 +24,7 @@
 import io, math
 from . import baseclasses, bbox, pdfwriter, color, unit, writer
 from .font.font import PDFHelvetica, PDFZapfDingbats
-try:               
+try:
     import zlib
     haszlib = True
 except ImportError:

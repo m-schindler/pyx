@@ -154,7 +154,7 @@ class default(_texter):
     r"a texter creating regular (e.g. '2') and exponential (e.g. '2\cdot10^5') labels"
 
     def __init__(self, multiplicationtex=r"\cdot{}", multiplicationunicode="·", base=Fraction(10),
-                       skipmantissaunity=skipmantissaunity.all, minusunity="-",
+                       skipmantissaunity=skipmantissaunity.all, minusunity="-", plusunity="",
                        minexponent=4, minnegexponent=None, uniformexponent=True,
                        mantissatexter=decimal(), basetexter=decimal(), exponenttexter=decimal(),
                        labelattrs=[text.mathmode], 
@@ -170,6 +170,7 @@ class default(_texter):
           (skip the unity mantissa whenever if all labels happen to be
           mantissafixed with unity)
         - minusunity is used as the output of -unity for the mantissa
+        - plusunity is used as the output of +unity for the mantissa
         - minexponent is the minimal positive exponent value to be printed by
           exponential notation
         - minnegexponent is the minimal negative exponent value to be printed by
@@ -191,6 +192,7 @@ class default(_texter):
         self.base = base
         self.skipmantissaunity = skipmantissaunity
         self.minusunity = minusunity
+        self.plusunity = plusunity
         self.minexponent = minexponent
         self.minnegexponent = minnegexponent if minnegexponent is not None else minexponent
         self.uniformexponent = uniformexponent
@@ -203,7 +205,7 @@ class default(_texter):
     def __call__(self, **kwargs):
         return default(**utils.merge_members_kwargs(self, [self.kwargs, kwargs],
                                                     ["multiplicationtex", "multiplicationunicode", "base", "skipmantissaunity",
-                                                     "minusunity", "minexponent", "minnegexponent", "uniformexponent",
+                                                     "minusunity", "plusunity", "minexponent", "minnegexponent", "uniformexponent",
                                                      "labelattrs", "mantissatexter", "basetexter", "exponenttexter"]))
 
     def labels(self, ticks):
@@ -267,8 +269,8 @@ class default(_texter):
                     mantissalabel_tex = tick.temp_mantissatick.label + self.multiplicationtex
                     mantissalabel_unicode = tick.temp_mantissatick.label + self.multiplicationunicode
                 else:
-                    mantissalabel_tex = self.minusunity if tick.temp_sign == -1 else ""
-                    mantissalabel_unicode = self.minusunity if tick.temp_sign == -1 else ""
+                    mantissalabel_tex = self.minusunity if tick.temp_sign == -1 else self.plusunity
+                    mantissalabel_unicode = self.minusunity if tick.temp_sign == -1 else self.plusunity
                 tick.label = text.MultiEngineText("%s%s^{%s}" % (mantissalabel_tex, basetick.label, tick.temp_exponenttick.label), [mantissalabel_unicode + basetick.label, text.Text(tick.temp_exponenttick.label, scale=0.8, shift=0.5)])
 
 

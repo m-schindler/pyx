@@ -155,6 +155,9 @@ class rgb(color):
     def rgb(self):
         return rgb(self.r, self.g, self.b)
 
+    def scaled(self, s):
+        return cmyk(s*(1-self.r), s*(1-self.g), s*(1-self.b))
+
     def colorspacestring(self):
         return "/DeviceRGB"
 
@@ -270,6 +273,9 @@ class cmyk(color):
         y = min(1, self.y + self.k)
         # conversion from cmy to rgb:
         return rgb(1 - c, 1 - m, 1 - y)
+
+    def scaled(self, s):
+        return cmyk(self.c*s, self.m*s, self.y*s, self.k*s)
 
     def colorspacestring(self):
         return "/DeviceCMYK"

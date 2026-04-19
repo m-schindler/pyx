@@ -1134,12 +1134,14 @@ class graphxyz(graph):
             else:
                 self.layer("axes").insert(axis.canvas)
 
-    def dokey(self):
+    def dokey(self, order=None):
         if self.did(self.dokey):
             return
         self.dobackground()
-        for plotitem in self.plotitems:
-            self.dokeyitem(plotitem)
+        if order is None:
+            order = range(len(self.plotitems))
+        for i in order:
+            self.dokeyitem(self.plotitems[i])
         if self.key is not None:
             c = self.key.paint(self.keyitems)
             bbox = c.bbox()

@@ -475,11 +475,21 @@ class canvas(baseclasses.canvasitem):
         cmd, kwargs = self._gscmd(device, filename, **kwargs)
 
         if input == "eps":
+            # TODO: remove the bottleneck from the PIPE
             cmd.append("-")
-            p = config.Popen(cmd, stdin=config.PIPE)
+            p = config.Popen(cmd, stdin=config.PIPE, stdout=config.PIPE)
             self.writeEPSfile(p.stdin, **kwargs)
+            out, err = p.communicate()
             p.stdin.close()
             p.wait()
+            retval = p.returncode
+            if 0: # debug
+                if type(out) is bytes:
+                   out = out.decode("utf-8")
+                if type(err) is bytes:
+                   err = err.decode("utf-8")
+                print(out, err, retval)
+
         elif input == "pdf":
             # PDF files need to be accesible by random access and thus we need to create
             # a temporary file

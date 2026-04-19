@@ -219,6 +219,9 @@ class linewidth(attr.sortbeforeexclusiveattr, strokestyle):
     def __eq__(self, other):
         return self.width == other.width if isinstance(other, self.__class__) else NotImplemented
 
+    def __mult__(self, factor):
+        return linewidth(self.width*factor)
+
     def processPS(self, file, writer, context, registry):
         context.linewidth_pt = unit.topt(self.width)
         file.write("%f setlinewidth\n" % context.linewidth_pt)

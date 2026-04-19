@@ -120,6 +120,9 @@ class decoratedpath(baseclasses.canvasitem):
         else:
             return self.path
 
+    def textpath(self):
+        return self.path
+
     def processPS(self, file, writer, context, registry, bbox):
         # draw (stroke and/or fill) the decoratedpath on the canvas
         # while trying to produce an efficient output, e.g., by
