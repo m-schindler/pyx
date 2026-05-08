@@ -123,11 +123,19 @@ class _keygraphstyle(_style):
 
     autographkey = _autokeygraph
 
-    def __init__(self, colorname="color", gradient=color.gradient.Grey, coloraxis=None, keygraph=_autokeygraph):
+    def __init__(self, colorname="color", gradient=color.gradient.Grey, coloraxis=None, keygraph=_autokeygraph,
+                 toosmall=None, toolarge=None):
         self.colorname = colorname
         self.gradient = gradient
+        self.toosmall = toosmall
+        self.toolarge = toolarge
         self.coloraxis = coloraxis
         self.keygraph = keygraph
+
+        if self.toosmall is not None and self.toosmall.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
+            raise Exception("need the same colorspace for parameter 'toosmall'")
+        if self.toolarge is not None and self.toolarge.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
+            raise Exception("need the same colorspace for parameter 'toolarge'")
 
     def columnnames(self, privatedata, sharedata, graph, columnnames, dataaxisnames):
         return [self.colorname]
@@ -157,9 +165,13 @@ class _keygraphstyle(_style):
     def color(self, privatedata, c):
         vc = privatedata.keygraph.axes["x"].convert(c)
         if vc < 0:
+            if self.toosmall is not None:
+                return self.toosmall
             logger.warning("gradient color range is exceeded (lower bound)")
             vc = 0
         if vc > 1:
+            if self.toolarge is not None:
+                return self.toolarge
             logger.warning("gradient color range is exceeded (upper bound)")
             vc = 1
         return self.gradient.getcolor(vc)
@@ -209,14 +221,13 @@ class _keygraphstyle_posneglog(_style):
             if self.keygraph_pos is None:
                 # we always need a keygraph, but we might not show it
                 if self.coloraxis_pos is None:
-                    coloraxis_pos = axis.log()
+                    coloraxis_pos = axis.lin()
                 else:
                     coloraxis_pos = self.coloraxis_pos
                 privatedata.keygraph_pos = graphx(length=4, direction="vertical", x=coloraxis_pos)
             elif self.keygraph_pos is _autokeygraph:
                 if self.coloraxis_pos is None:
                     coloraxis_pos = axis.lin(title=plotitem.title)
-                    plotitem.title = None # Huui!?
                 else:
                     coloraxis_pos = self.coloraxis_pos
                 privatedata.keygraph_pos = graphx(x=coloraxis_pos, **graph.autokeygraphattrs())
@@ -230,14 +241,13 @@ class _keygraphstyle_posneglog(_style):
             if self.keygraph_neg is None:
                 # we always need a keygraph, but we might not show it
                 if self.coloraxis_neg is None:
-                    coloraxis_neg = axis.log()
+                    coloraxis_neg = axis.lin()
                 else:
                     coloraxis_neg = self.coloraxis_neg
                 privatedata.keygraph_neg = graphx(length=4, direction="vertical", x=coloraxis_neg)
             elif self.keygraph_neg is _autokeygraph:
                 if self.coloraxis_neg is None:
                     coloraxis_neg = axis.lin(title=plotitem.title)
-                    plotitem.title = None # Huui!?
                 else:
                     coloraxis_neg = self.coloraxis_neg
                 privatedata.keygraph_neg = graphx(x=coloraxis_neg, **graph.autokeygraphattrs())
@@ -259,7 +269,12 @@ class _keygraphstyle_posneglog(_style):
             toosmall = self.toolarge_neg # notice that we understand "small" and "large"
             toolarge = self.toosmall_neg # as of the absolute value
 
-        vc = keygraph.axes["x"].convert(c)
+        try:
+            vc = keygraph.axes["x"].convert(c)
+        except axis.axis.TooLargeValueError:
+            return toolarge
+        except axis.axis.TooSmallValueError:
+            return toomall
         if vc < 0:
             return toosmall
             #logger.warning("gradient color range is exceeded (lower bound)")

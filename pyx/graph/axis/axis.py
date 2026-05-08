@@ -28,6 +28,11 @@ from pyx.graph.axis import painter, parter, positioner, rater, texter, tick
 logger = logging.getLogger("pyx")
 class _marker: pass
 
+class TooLargeValueError(Exception):
+    pass
+
+class TooSmallValueError(Exception):
+    pass
 
 class axisdata:
     """axis data storage class
@@ -309,11 +314,19 @@ class logarithmic(_regularaxis):
         """axis coordinates -> graph coordinates"""
         # TODO: store log(data.min) and log(data.max)
         if data.max < 0:
+            try:
+                math.log(-float(value))
+            except ValueError:
+                raise TooLargeValueError
             if self.reverse:
                 return (math.log(-data.max) - math.log(-float(value))) / (math.log(-data.max) - math.log(-data.min))
             else:
                 return (math.log(-float(value)) - math.log(-data.min)) / (math.log(-data.max) - math.log(-data.min))
         else:
+            try:
+                math.log(float(value))
+            except ValueError:
+                raise TooSmallValueError
             if self.reverse:
                 return (math.log(data.max) - math.log(float(value))) / (math.log(data.max) - math.log(data.min))
             else:
