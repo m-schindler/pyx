@@ -158,6 +158,15 @@ class rgb(color):
     def scaled(self, s):
         return cmyk(s*(1-self.r), s*(1-self.g), s*(1-self.b))
 
+    def __mul__(self, s):
+        return rgb(min(s*self.r, 1), min(s*self.g, 1), min(s*self.b, 1))
+
+    def __rmul__(self, s):
+        return self.__mul__(s)
+
+    def __add__(self, other):
+        return rgb(min(self.r+other.r, 1), min(self.g+other.g, 1), min(self.b+other.b, 1))
+
     def colorspacestring(self):
         return "/DeviceRGB"
 
@@ -276,6 +285,15 @@ class cmyk(color):
 
     def scaled(self, s):
         return cmyk(self.c*s, self.m*s, self.y*s, self.k*s)
+
+    def __mul__(self, s):
+        return cmyk(min(s*self.c, 1), min(s*self.m, 1), min(s*self.y, 1), min(s*self.k, 1))
+
+    def __rmul__(self, s):
+        return self.__mul__(s)
+
+    def __add__(self, other):
+        return cmyk(min(self.c+other.c, 1), min(self.m+other.m, 1), min(self.y+other.y, 1), min(self.k+other.k, 1))
 
     def colorspacestring(self):
         return "/DeviceCMYK"
