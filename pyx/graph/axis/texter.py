@@ -203,12 +203,20 @@ class default(_texter):
         self.kwargs = kwargs
 
     def __call__(self, **kwargs):
+        x = default(**utils.merge_members_kwargs(self, [self.kwargs, kwargs],
+                                                    ["multiplicationtex", "multiplicationunicode", "base", "skipmantissaunity",
+                                                     "minusunity", "plusunity", "minexponent", "minnegexponent", "uniformexponent",
+                                                     "labelattrs", "mantissatexter", "basetexter", "exponenttexter"]))
+        print("call:", x.plusunity)
         return default(**utils.merge_members_kwargs(self, [self.kwargs, kwargs],
                                                     ["multiplicationtex", "multiplicationunicode", "base", "skipmantissaunity",
                                                      "minusunity", "plusunity", "minexponent", "minnegexponent", "uniformexponent",
                                                      "labelattrs", "mantissatexter", "basetexter", "exponenttexter"]))
 
     def labels(self, ticks):
+        print("A:", self.plusunity)
+        if self.plusunity != "+":
+            raise Exception()
         labeledticks = []
         for tick in ticks:
             if tick.label is None and tick.labellevel is not None:

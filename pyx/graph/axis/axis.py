@@ -317,6 +317,7 @@ class logarithmic(_regularaxis):
             try:
                 math.log(-float(value))
             except ValueError:
+                #return (0 if self.reverse else 1)
                 raise TooLargeValueError
             if self.reverse:
                 return (math.log(-data.max) - math.log(-float(value))) / (math.log(-data.max) - math.log(-data.min))
@@ -326,6 +327,7 @@ class logarithmic(_regularaxis):
             try:
                 math.log(float(value))
             except ValueError:
+                #return (0 if self.reverse else 1)
                 raise TooSmallValueError
             if self.reverse:
                 return (math.log(data.max) - math.log(float(value))) / (math.log(data.max) - math.log(data.min))

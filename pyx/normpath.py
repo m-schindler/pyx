@@ -168,7 +168,7 @@ class normline_pt(normsubpathitem):
         self.y1_pt = y1_pt
 
     def __str__(self):
-        return "normline_pt(%g, %g, %g, %g)" % (self.x0_pt, self.y0_pt, self.x1_pt, self.y1_pt)
+        return "normline_pt({}, {}, {}, {})".format(self.x0_pt, self.y0_pt, self.x1_pt, self.y1_pt)
 
     def _arclentoparam_pt(self, lengths_pt, epsilon):
         # do self.arclen_pt inplace for performance reasons

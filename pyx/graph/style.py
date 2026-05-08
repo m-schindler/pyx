@@ -131,6 +131,14 @@ class _keygraphstyle(_style):
         self.toolarge = toolarge
         self.coloraxis = coloraxis
         self.keygraph = keygraph
+        self.toosmall = toosmall
+        self.toolarge = toolarge
+
+        if self.toosmall is None or self.toosmall.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
+            self.toosmall = self.gradient.getcolor(0)
+        if self.toolarge is None or self.toolarge.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
+            self.toolarge = self.gradient.getcolor(1)
+
 
         if self.toosmall is not None and self.toosmall.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
             raise Exception("need the same colorspace for parameter 'toosmall'")
@@ -187,8 +195,8 @@ class _keygraphstyle_posneglog(_style):
     autographkey = _autokeygraph
 
     def __init__(self, colorname="color",
-                 gradient_pos=color.gradient.Grey, coloraxis_pos=None, keygraph_pos=_autokeygraph,
-                 gradient_neg=color.gradient.Grey, coloraxis_neg=None, keygraph_neg=_autokeygraph,
+                 gradient_pos=color.gradient.Grey, coloraxis_pos=None, keygraph_pos=None,
+                 gradient_neg=color.gradient.Grey, coloraxis_neg=None, keygraph_neg=None,
                  toosmall_pos=None, toolarge_pos=None, toosmall_neg=None, toolarge_neg=None):
         self.colorname = colorname
         self.gradient_pos = gradient_pos
@@ -2066,10 +2074,18 @@ class density(_keygraphstyle):
 
     needsdata = ["values1", "values2", "data12", "data21"]
 
-    def __init__(self, epsilon=1e-10, bgcolor=color.gray.white, **kwargs):
+    def __init__(self, epsilon=1e-10, bgcolor=color.gray.white,
+                 toosmall=None, toolarge=None, **kwargs):
         _keygraphstyle.__init__(self, **kwargs)
         self.epsilon = epsilon
         self.bgcolor = bgcolor
+        self.toosmall = toosmall
+        self.toolarge = toolarge
+
+        if self.toosmall is None or self.toosmall.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
+            self.toosmall = self.gradient.getcolor(0)
+        if self.toolarge is None or self.toolarge.colorspacestring() != self.gradient.getcolor(0).colorspacestring():
+            self.toolarge = self.gradient.getcolor(1)
 
     def initdrawpoints(self, privatedata, sharedata, graph):
         privatedata.colors = {}

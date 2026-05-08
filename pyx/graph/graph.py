@@ -606,12 +606,16 @@ class graphxy(graph):
                 self.layer(self.axistographlayers[layer]).insert(canvas)
             assert len(axis.canvas.layers) == len(axis.canvas.items), str(axis.canvas.items)
 
-    def dokey(self):
+    def dokey(self, order=None):
         if self.did(self.dokey):
             return
         self.dobackground()
-        for plotitem in self.plotitems:
-            self.dokeyitem(plotitem)
+        if order is None:
+            for plotitem in self.plotitems:
+                self.dokeyitem(plotitem)
+        else:
+            for i in order:
+                self.dokeyitem(self.plotitems[i])
         if self.key is not None:
             c = self.key.paint(self.keyitems)
             bbox = c.bbox()
@@ -1139,9 +1143,11 @@ class graphxyz(graph):
             return
         self.dobackground()
         if order is None:
-            order = range(len(self.plotitems))
-        for i in order:
-            self.dokeyitem(self.plotitems[i])
+            for plotitem in self.plotitems:
+                self.dokeyitem(plotitem)
+        else:
+           for i in order:
+               self.dokeyitem(self.plotitems[i])
         if self.key is not None:
             c = self.key.paint(self.keyitems)
             bbox = c.bbox()

@@ -608,8 +608,7 @@ class arc_pt(pathitem):
         self.angle2 = angle2
 
     def __str__(self):
-        return "arc_pt(%g, %g, %g, %g, %g)" % (self.x_pt, self.y_pt, self.r_pt,
-                                               self.angle1, self.angle2)
+        return "arc_pt({}, {}, {}, {}, {})".format(self.x_pt, self.y_pt, self.r_pt, self.angle1, self.angle2)
 
     def createcontext(self):
         x1_pt, y1_pt = _arcpoint(self.x_pt, self.y_pt, self.r_pt, self.angle1)
